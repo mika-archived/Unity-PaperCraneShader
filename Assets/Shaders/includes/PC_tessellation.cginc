@@ -5,7 +5,7 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  *------------------------------------------------------------------------------------------*/
 
-// #include "core.cginc"
+// #include "PC_core.cginc"
 
 h2d_const hs_const()
 {
