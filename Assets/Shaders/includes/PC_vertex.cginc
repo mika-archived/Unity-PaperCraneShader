@@ -5,7 +5,7 @@
 
 // #include "PC_core.cginc"
 
-v2h vs(appdata_full data)
+v2h vs(const appdata_full data)
 {
     v2h o = (v2h) 0;
     o.position = data.vertex;

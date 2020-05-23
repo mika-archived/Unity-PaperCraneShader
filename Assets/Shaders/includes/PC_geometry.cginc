@@ -5,7 +5,7 @@
 
 // #include "PC_core.cginc"
 
-float3 calcDistance(float3 distance, int index)
+float3 calcDistance(const float3 distance, const int index)
 {
     if (index == 0) {
         return float3(distance.x, 0, 0);
