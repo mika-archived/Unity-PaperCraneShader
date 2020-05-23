@@ -29,6 +29,8 @@ Shader "Mochizuki/PaperCrane Shader"
             CGPROGRAM
 
             #pragma target 5.0
+            // enable DirectX debugger in Visual Studio
+            #pragma enable_d3d11_debug_symbols
 
             #pragma vertex   vs
             #pragma hull     hs
