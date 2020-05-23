@@ -36,17 +36,16 @@ h2d hs(InputPatch<v2h, 4> input, uint id : SV_OUTPUTCONTROLPOINTID)
 }
 
 [domain("quad")]
-d2g ds(h2d_const data, const OutputPatch<h2d, 4> i, float2 uv : SV_DOMAINLOCATION)
+d2g ds(const h2d_const data, const OutputPatch<h2d, 4> i, const float2 uv : SV_DOMAINLOCATION)
 {
     d2g o = (d2g) 0;
 
-    float3 x = lerp(i[0].position, i[1].position, uv.x);
-    float3 y = lerp(i[3].position, i[2].position, uv.x);
-    float3 z = lerp(x, y, uv.y);
+    const float3 x = lerp(i[0].position, i[1].position, uv.x);
+    const float3 y = lerp(i[3].position, i[2].position, uv.x);
+    const float3 z = lerp(x, y, uv.y);
 
-    // o.position = UnityObjectToClipPos(float4(z, 1.0f));
-    o.position = float4(z, 1.0f);
-    o.id       = (uint) (uv.x * (TESSELLATION - 1)) + ((uint) (uv.y * TESSELLATION) * (TESSELLATION - 1));
+    o.position      = float4(z, 1.0f);
+    o.id            = (uint) (uv.x * TESSELLATION) + ((uint) ((uv.y * TESSELLATION) * TESSELLATION)) + (uint) (uv.y * TESSELLATION);
 
     return o;
 }
