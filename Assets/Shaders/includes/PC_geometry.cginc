@@ -86,13 +86,11 @@ void gs(const point d2g IN[1], inout const TriangleStream<g2f> stream)
 
             const float3 vert = vertex[k];
 
-            const float3 position = float3(
-                lerp(vert.x, vert.x - lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(k - 3))),
-                lerp(vert.y, vert.y + lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(k - 3))),
-                lerp(vert.z, vert.z + (lengthOfEdge * sin(rad)), 1 - abs(sign(k - 3)))
-            );
+            const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(k - 3)));
+            const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(k - 3)));
+            const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(k - 3)));
             
-            o[k].position = UnityObjectToClipPos(i.position.xyz + position);
+            o[k].position = UnityObjectToClipPos(i.position.xyz + float(x, y, z));
 
             stream.Append(o[k]);
         }
