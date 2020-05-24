@@ -32,7 +32,8 @@ float3 distanceOf(const float3 distance, const int index)
 
 void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint count)
 {
-    const float rad = radians(_CurrentFrame * 180);
+    const float frame = _CurrentFrame;
+    const float rad   = radians(frame * 180);
 
     const float3 vertex[6] = {
         // 
@@ -50,8 +51,8 @@ void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     {
         const float3 vert = vertex[j];
 
-        const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(j - 3)));
-        const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(j - 3)));
+        const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
+        const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
         const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(j - 3)));
             
         o[j].id = i.id * 10 + j;
@@ -61,7 +62,37 @@ void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
 
 void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint count)
 {
+    const float frame = _CurrentFrame - 1.0f;
+    const float rad   = radians(frame * 180);
 
+    const float3 vertex[6] = {
+        // 1st and last
+        float3(0.0f, 0.0f, 0.0f),
+        float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
+        float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
+        // 
+        float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
+        float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
+        float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
+    };
+
+    // WORKAROUND: In HLSL, `round(x)` (where x is 0.5f) is specifed to return 0.
+    const uint a = (uint) round(abs(i.position.x * 100.0f) / i.tessellation + 0.1f);
+    const uint b = (uint) round(abs(i.position.y * 100.0f) / i.tessellation + 0.1f);
+    count = (a + b) * 3;
+
+    [unroll]
+    for (uint j = 0; j < count; j++)
+    {
+        const float3 vert = vertex[j];
+
+        const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
+        const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
+        const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(j - 3)));
+            
+        o[j].id = i.id * 10 + j;
+        o[j].position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
+    }
 }
 
 [maxvertexcount(6)]
