@@ -3,8 +3,6 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  *------------------------------------------------------------------------------------------*/
 
-#define TESSELLATION 3
-
 uniform float  _CurrentFrame;
 uniform float4 _Color;
 uniform float4 _LineColor;
@@ -25,11 +23,14 @@ struct h2d {
 };
 
 struct d2g {
-    uint   id       : IDENTIFIER;
-    float4 position : POSITION;
+    uint   id            : IDENTIFIER;
+    float  tessellation  : TESSELLATION;
+    float4 position      : POS;
+    float4 worldPosition : POSITION;   // for debugging
 };
 
 struct g2f {
+    uint   id       : IDENTIFIER;
     float4 position : POSITION;
     float3 distance : TEXCOORD0;
 };

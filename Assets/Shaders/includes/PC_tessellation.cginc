@@ -7,26 +7,39 @@
 
 // #include "PC_core.cginc"
 
-h2d_const hs_const()
+h2d_const hs_const(const InputPatch<v2h, 4> i)
 {
+    // Post Direct3D10, static uniform branches have little performance impact.
+    // ref: https://stackoverflow.com/questions/37827216/do-conditional-statements-slow-down-shaders
+    //
+    // But well, it's best not to use it.
+    float tessellation = 0.0f;
+    if (_CurrentFrame < 1.0f)
+    {
+        tessellation = 1.0f;
+    }
+    else if (1 <= _CurrentFrame && _CurrentFrame < 2)
+    {
+        tessellation = 0.0f;
+    }
+
     h2d_const o = (h2d_const) 0;
-    const float tess = TESSELLATION + 1;
-    o.edges[0]  = tess;
-    o.edges[1]  = tess;
-    o.edges[2]  = tess;
-    o.edges[3]  = tess;
-    o.inside[0] = tess;
-    o.inside[1] = tess;
+    o.edges[0]  = tessellation;
+    o.edges[1]  = tessellation;
+    o.edges[2]  = tessellation;
+    o.edges[3]  = tessellation;
+    o.inside[0] = tessellation;
+    o.inside[1] = tessellation;
 
     return o;
 }
 
 [domain("quad")]
 [partitioning("pow2")]
-[outputtopology("triangle_cw")]
+[outputtopology("point")]
 [outputcontrolpoints(4)]
 [patchconstantfunc("hs_const")]
-h2d hs(InputPatch<v2h, 4> input, uint id : SV_OUTPUTCONTROLPOINTID)
+h2d hs(const InputPatch<v2h, 4> input, const uint id : SV_OUTPUTCONTROLPOINTID)
 {
     h2d o = (h2d) 0;
     o.position = input[id].position.xyz;
@@ -38,14 +51,15 @@ h2d hs(InputPatch<v2h, 4> input, uint id : SV_OUTPUTCONTROLPOINTID)
 [domain("quad")]
 d2g ds(const h2d_const data, const OutputPatch<h2d, 4> i, const float2 uv : SV_DOMAINLOCATION)
 {
-    d2g o = (d2g) 0;
-
     const float3 x = lerp(i[0].position, i[1].position, uv.x);
     const float3 y = lerp(i[3].position, i[2].position, uv.x);
     const float3 z = lerp(x, y, uv.y);
 
+    d2g o = (d2g) 0;
+    o.tessellation  = data.edges[0];
     o.position      = float4(z, 1.0f);
-    o.id            = (uint) (uv.x * TESSELLATION) + ((uint) ((uv.y * TESSELLATION) * TESSELLATION)) + (uint) (uv.y * TESSELLATION);
+    o.worldPosition = UnityObjectToClipPos(o.position); // for debugging
+    o.id            = (uint) (uv.x * o.tessellation) + ((uint) ((uv.y * o.tessellation) * o.tessellation)) + (uint) (uv.y * o.tessellation);
 
     return o;
 }
