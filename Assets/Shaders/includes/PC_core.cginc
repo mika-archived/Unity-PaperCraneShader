@@ -5,9 +5,9 @@
 
 #define TESSELLATION 3
 
-float  _CurrentFrame;
-float4 _Color;
-float4 _LineColor;
+uniform float  _CurrentFrame;
+uniform float4 _Color;
+uniform float4 _LineColor;
 
 struct v2h {
     float4 position : POSITION;
