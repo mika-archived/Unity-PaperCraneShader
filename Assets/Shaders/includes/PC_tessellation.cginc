@@ -9,19 +9,12 @@
 
 h2d_const hs_const(const InputPatch<v2h, 4> i)
 {
-    // Post Direct3D10, static uniform branches have little performance impact.
-    // ref: https://stackoverflow.com/questions/37827216/do-conditional-statements-slow-down-shaders
-    //
-    // But well, it's best not to use it.
-    float tessellation = 0.0f;
-    if (_CurrentFrame < 1.0f)
-    {
-        tessellation = 1.0f;
-    }
-    else if (1 <= _CurrentFrame && _CurrentFrame < 2)
-    {
-        tessellation = 0.0f;
-    }
+    const float tessTable[2] = {
+        1.0f,
+        2.0f,
+    };
+    
+    const float tessellation = tessTable[(int) clamp(_CurrentFrame, 0.0f, 2.0f)];
 
     h2d_const o = (h2d_const) 0;
     o.edges[0]  = tessellation;
