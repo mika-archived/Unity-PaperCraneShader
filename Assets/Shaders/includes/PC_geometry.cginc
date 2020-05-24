@@ -46,24 +46,16 @@ void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     };
 
     [unroll]
-    for (int j = 0; j < 3; j++)
+    for (uint j = 0; j < 6; j++)
     {
-        o[j].id  = i.id * 10 + j;
-        o[j].position = UnityObjectToClipPos(i.position.xyz + vertex[j]);
-    }
+        const float3 vert = vertex[j];
 
-    [unroll]
-    for (int k = 3; k < 6; k++)
-    {
-        o[k].id = i.id * 10 + k;
-
-        const float3 vert = vertex[k];
-
-        const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(k - 3)));
-        const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(k - 3)));
-        const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(k - 3)));
+        const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(j - 3)));
+        const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, _CurrentFrame), 1 - abs(sign(j - 3)));
+        const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(j - 3)));
             
-        o[k].position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
+        o[j].id = i.id * 10 + j;
+        o[j].position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
     }
 }
 
