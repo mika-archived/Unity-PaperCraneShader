@@ -80,15 +80,10 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     // Perhaps the fact that dynamically determining the number of loops here could cause performance problems.
     count = (a + b) * 3;
 
-    if (a == 3 && a == 1) {
-        count = 0;
-    }
-
-    const bool isSquare = count == 6;
-
     [unroll]
     for (uint j = 0; j < count; j++)
     {
+        const float c = lengthOfEdge;
         const uint k = count == 6 ? j + 6 : (a == 1 ? j + 3 : j);
         const float3 vert = vertex[k];
 
@@ -96,7 +91,6 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         float y = 0.0f; // vert.y;
         float z = 0.0f; // vert.z;
 
-        const float a = lengthOfEdge;
 
         // curve square's triangle
         x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k - 8)));
@@ -106,7 +100,7 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         // curve triangle
         x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge * 2, frame), 1 - abs(sign(k - 2)));
         y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge * 2, frame), 1 - abs(sign(k - 2)));
-        z += lerp(0.0f, 0.0f + sqrt(pow(a, 2) * 2) * sin(rad),   1 - abs(sign(k - 2)));
+        z += lerp(0.0f, 0.0f + sqrt(pow(c, 2) * 2) * sin(rad),   1 - abs(sign(k - 2)));
 
         // curve triangle
         x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k)));
