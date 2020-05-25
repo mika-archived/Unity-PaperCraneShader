@@ -55,8 +55,12 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     const float frame = _CurrentFrame - 1.0f;
     const float rad   = radians(frame * 180);
 
-    const float3 vertex[9] = {
-        // triangle
+    const float3 vertex[12] = {
+        // triangle 1
+        float3(0.0f, 0.0f, 0.0f),
+        float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
+        float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
+        // triangle 2
         float3(0.0f, 0.0f, 0.0f),
         float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
@@ -72,19 +76,45 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     // WORKAROUND: In HLSL, `round(x)` (where x is 0.5f) is specifed to return 0.
     const uint a = (uint) round(abs(i.position.x * 100.0f) / i.tessellation + 0.1f);
     const uint b = (uint) round(abs(i.position.y * 100.0f) / i.tessellation + 0.1f);
+
+    // Perhaps the fact that dynamically determining the number of loops here could cause performance problems.
     count = (a + b) * 3;
+
+    if (a == 3 && a == 1) {
+        count = 0;
+    }
+
+    const bool isSquare = count == 6;
 
     [unroll]
     for (uint j = 0; j < count; j++)
     {
-        const float3 vert = vertex[count == 6 ? j + 3: j];
+        const uint k = count == 6 ? j + 6 : (a == 1 ? j + 3 : j);
+        const float3 vert = vertex[k];
 
-        const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
-        const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
-        const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(j - 3)));
-            
+        float x = 0.0f; // vert.x;
+        float y = 0.0f; // vert.y;
+        float z = 0.0f; // vert.z;
+
+        const float a = lengthOfEdge;
+
+        // curve square's triangle
+        x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k - 8)));
+        y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k - 8)));
+        z += lerp(0.0f, 0.0f + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(k - 8)));
+
+        // curve triangle
+        x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge * 2, frame), 1 - abs(sign(k - 2)));
+        y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge * 2, frame), 1 - abs(sign(k - 2)));
+        z += lerp(0.0f, 0.0f + sqrt(pow(a, 2) * 2) * sin(rad),   1 - abs(sign(k - 2)));
+
+        // curve triangle
+        x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k)));
+        y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k)));
+        z += lerp(0.0f, 0.0f + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(k)));
+
         o[j].id = i.id * 10 + j;
-        o[j].position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
+        o[j].position = UnityObjectToClipPos(i.position.xyz + float3(vert.x + x, vert.y + y, vert.z + z));
     }
 }
 
