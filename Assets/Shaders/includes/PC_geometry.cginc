@@ -87,25 +87,24 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         const uint k = count == 6 ? j + 6 : (a == 1 ? j + 3 : j);
         const float3 vert = vertex[k];
 
-        float x = 0.0f; // vert.x;
-        float y = 0.0f; // vert.y;
-        float z = 0.0f; // vert.z;
+        // curve triangle
+        const float x1 = 0.0f - lerp(0, lengthOfEdge * 2, frame);
+        const float y1 = 0.0f - lerp(0, lengthOfEdge * 2, frame);
+        const float z1 = 0.0f + sqrt(pow(c, 2) * 2) * sin(rad);
 
-
-        // curve square's triangle
-        x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k - 8)));
-        y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k - 8)));
-        z += lerp(0.0f, 0.0f + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(k - 8)));
+        float x = 0.0f;
+        float y = 0.0f;
+        float z = 0.0f;
 
         // curve triangle
-        x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge * 2, frame), 1 - abs(sign(k - 2)));
-        y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge * 2, frame), 1 - abs(sign(k - 2)));
-        z += lerp(0.0f, 0.0f + sqrt(pow(c, 2) * 2) * sin(rad),   1 - abs(sign(k - 2)));
+        x += lerp(0.0f, 0.0f + x1 * 0.5f, 1 - abs(sign(k % 8)));
+        y += lerp(0.0f, 0.0f + y1 * 0.5f, 1 - abs(sign(k % 8)));
+        z += lerp(0.0f, 0.0f + z1 * 0.5f, 1 - abs(sign(k % 8)));
 
         // curve triangle
-        x += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k)));
-        y += lerp(0.0f, 0.0f - lerp(0, lengthOfEdge, frame),   1 - abs(sign(k)));
-        z += lerp(0.0f, 0.0f + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(k)));
+        x += lerp(0.0f, x1, 1 - abs(sign(k - 2)));
+        y += lerp(0.0f, y1, 1 - abs(sign(k - 2)));
+        z += lerp(0.0f, z1, 1 - abs(sign(k - 2)));
 
         o[j].id = i.id * 10 + j;
         o[j].position = UnityObjectToClipPos(i.position.xyz + float3(vert.x + x, vert.y + y, vert.z + z));
