@@ -18,16 +18,6 @@ float3 distanceOf(const float3 distance, const int index)
         lerp(0, distance.y, 1 - abs(sign(index - 1))),
         lerp(0, distance.z, 1 - abs(sign(index - 2)))
     );
-
-    /*
-    if (index == 0) {
-        return float3(distance.x, 0, 0);
-    } else if (index == 1) {
-        return float3(0, distance.y, 0);
-    } else {
-        return float3(0, 0, distance.z);
-    }
-    */
 }
 
 void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint count)
@@ -36,11 +26,11 @@ void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     const float rad   = radians(frame * 180);
 
     const float3 vertex[6] = {
-        // 
+        //
         float3(0.0f, 0.0f, 0.0f),
         float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
-        // 
+        //
         float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
         float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
@@ -54,7 +44,7 @@ void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
         const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
         const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(j - 3)));
-            
+
         o[j].id = i.id * 10 + j;
         o[j].position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
     }
@@ -65,14 +55,17 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     const float frame = _CurrentFrame - 1.0f;
     const float rad   = radians(frame * 180);
 
-    const float3 vertex[6] = {
-        // 1st and last
+    const float3 vertex[9] = {
+        // triangle
         float3(0.0f, 0.0f, 0.0f),
         float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
-        // 
+        // square
+        float3(0.0f, 0.0f, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
+        float3(0.0f, 0.0f, 0.0f),
+        float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
     };
 
@@ -84,7 +77,7 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
     [unroll]
     for (uint j = 0; j < count; j++)
     {
-        const float3 vert = vertex[j];
+        const float3 vert = vertex[count == 6 ? j + 3: j];
 
         const float x = lerp(vert.x, vert.x - lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
         const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
