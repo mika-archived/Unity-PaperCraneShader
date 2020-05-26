@@ -49,7 +49,6 @@ d2g ds(const h2d_const data, const OutputPatch<h2d, 4> i, const float2 uv : SV_D
     d2g o = (d2g) 0;
     o.tessellation  = data.edges[0];
     o.position      = float4(z, 1.0f);
-    o.worldPosition = UnityObjectToClipPos(o.position); // for debugging
     o.id            = (uint) (uv.x * o.tessellation) + ((uint) ((uv.y * o.tessellation) * o.tessellation)) + (uint) (uv.y * o.tessellation);
 
     return o;

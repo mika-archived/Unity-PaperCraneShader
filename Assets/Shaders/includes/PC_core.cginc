@@ -3,6 +3,10 @@
  * Licensed under the MIT License. See LICENSE in the project root for license information.
  *------------------------------------------------------------------------------------------*/
 
+#if defined(SHADOWS_BOX) && !defined(SHADOWS_CUBE_IN_DEPTH_TEX)
+#define PC_PASS_CUBE_SHADOWCASTER
+#endif
+
 uniform float  _CurrentFrame;
 uniform float4 _Color;
 uniform float4 _LineColor;
@@ -26,13 +30,16 @@ struct d2g {
     uint   id            : IDENTIFIER;
     float  tessellation  : TESSELLATION;
     float4 position      : POS;
-    float4 worldPosition : POSITION;   // for debugging
 };
 
 struct g2f {
     uint   id       : IDENTIFIER;
     float4 position : POSITION;
     float3 distance : TEXCOORD0;
+
+#if defined(PC_PASS_CUBE_SHADOWCASTER)
+    float3 shadow   : TEXCOORD1;
+#endif
 };
 
 #include "PC_vertex.cginc"

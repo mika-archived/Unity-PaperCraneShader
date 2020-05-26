@@ -14,7 +14,7 @@ Shader "Mochizuki/Example Shader"
 
     SubShader
     {
-        Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
+        Tags { "RenderType" = "Opaque" }
         LOD 100
 
         Blend SrcAlpha OneMinusSrcAlpha
@@ -23,6 +23,8 @@ Shader "Mochizuki/Example Shader"
 
         Pass
         {
+            Tags { "LightMode" = "ForwardBase" }
+
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
 
@@ -31,6 +33,7 @@ Shader "Mochizuki/Example Shader"
             #pragma target 5.0
             // enable DirectX debugger in Visual Studio
             #pragma enable_d3d11_debug_symbols
+            #pragma multi_compile_fwdbase
 
             #pragma vertex   vs
             #pragma hull     hs
@@ -59,10 +62,19 @@ Shader "Mochizuki/Example Shader"
             #pragma enable_d3d11_debug_symbols
             #pragma multi_compile_shadowcaster
 
-            #pragma vertex   vertShadowCaster
-            #pragma fragment fragShadowCaster
+            #pragma vertex   vs
+            #pragma hull     hs
+            #pragma domain   ds
+            #pragma geometry gs
+            #pragma fragment fs
 
-            #include "UnityStandardShadow.cginc"
+            #include "UnityCG.cginc"
+
+            #define  PC_PASS_SHADOWCASTER
+
+            #include "vendors/UCLA GameLab Wireframe Functions.cginc"
+            #include "includes/PC_core.cginc"
+
 
             ENDCG
         }
