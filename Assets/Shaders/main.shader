@@ -45,5 +45,28 @@ Shader "Mochizuki/Example Shader"
 
             ENDCG
         }
+        
+        Pass
+        {
+            Tags { "LightMode" = "ShadowCaster" }
+
+            ZWrite On ZTest LEqual
+
+            CGPROGRAM
+
+            #pragma target 5.0
+            // enable DirectX debugger in Visual Studio
+            #pragma enable_d3d11_debug_symbols
+            #pragma multi_compile_shadowcaster
+
+            #pragma vertex   vertShadowCaster
+            #pragma fragment fragShadowCaster
+
+            #include "UnityStandardShadow.cginc"
+
+            ENDCG
+        }
     }
+
+    Fallback "Diffuse"
 }
