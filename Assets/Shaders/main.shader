@@ -51,7 +51,10 @@ Shader "Mochizuki/Example Shader"
         
         Pass
         {
-            Tags { "LightMode" = "ShadowCaster" }
+            Name "ShadowCaster"
+            Tags {
+                "LightMode" = "ShadowCaster"
+            }
 
             ZWrite On ZTest LEqual
 

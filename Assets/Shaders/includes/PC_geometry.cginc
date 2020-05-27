@@ -20,6 +20,17 @@ float3 distanceOf(const float3 distance, const int index)
     );
 }
 
+void applyParameters(inout g2f o, uint id, float4 position)
+{
+#if defined(PC_PASS_CUBE_SHADOWCASTER)
+#elif defined(PC_PASS_SHADOWCASTER)
+    o.pos = UnityApplyLinearShadowBias(position);
+#else
+    o.id = id;
+    o.position = position;
+#endif
+}
+
 void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint count)
 {
     const float frame = _CurrentFrame;
@@ -45,8 +56,10 @@ void doStep1(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         const float y = lerp(vert.y, vert.y + lerp(0, lengthOfEdge, frame), 1 - abs(sign(j - 3)));
         const float z = lerp(vert.z, vert.z + sqrt(x * x + y * y) * sin(rad), 1 - abs(sign(j - 3)));
 
-        o[j].id = i.id * 10 + j;
-        o[j].position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
+        const uint id = i.id * 10 + j;
+        const float4 position = UnityObjectToClipPos(i.position.xyz + float3(x, y, z));
+
+        applyParameters(o[j], id, position);
     }
 }
 
@@ -106,8 +119,10 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         y += lerp(0.0f, y1, 1 - abs(sign(k - 2)));
         z += lerp(0.0f, z1, 1 - abs(sign(k - 2)));
 
-        o[j].id = i.id * 10 + j;
-        o[j].position = UnityObjectToClipPos(i.position.xyz + float3(vert.x + x, vert.y + y, vert.z + z));
+        const uint id = i.id * 10 + j;
+        const float4 position = UnityObjectToClipPos(i.position.xyz + float3(vert.x + x, vert.y + y, vert.z + z));
+
+        applyParameters(o[j], id, position);
     }
 }
 
