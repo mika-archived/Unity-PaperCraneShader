@@ -34,7 +34,7 @@ float4 fs(const g2f data) : SV_TARGET
 
 float4 fs(const g2f data) : SV_TARGET
 {
-    SHADOW_CASTER_FRAGMENT(data)
+    return 0;
 }
 
 #else

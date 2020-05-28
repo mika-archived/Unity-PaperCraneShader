@@ -34,13 +34,12 @@ struct d2g {
 };
 
 struct g2f {
-#if defined(PC_PASS_CUBE_SHADOWCASTER)
-#elif defined(PC_PASS_SHADOWCASTER)
-    V2F_SHADOW_CASTER;
-#else
     uint   id       : IDENTIFIER;
-    float3 distance : TEXCOORD;
     float4 position : POSITION;
+    float3 distance : TEXCOORD0;
+
+#if defined(PC_PASS_CUBE_SHADOWCASTER)
+    float3 shadow   : TEXCOORD1;
 #endif
 };
 
