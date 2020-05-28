@@ -9,6 +9,7 @@
 
 uniform float  _CurrentFrame;
 uniform float4 _Color;
+uniform float4 _BackgroundColor;
 uniform float4 _LineColor;
 
 struct v2h {

@@ -7,9 +7,10 @@ Shader "Mochizuki/Example Shader"
 {
     Properties
     {
-        _CurrentFrame ("Current Frame", Range(0, 2)) = 0.0
-        _Color        ("Color",         Color)       = (0.5, 0.5, 0.5, 1)
-        _LineColor    ("Line Color",    Color)       = (0, 0, 0, 1)
+        _CurrentFrame    ("Current Frame",    Range(0, 2)) = 0.0
+        _Color           ("Color",            Color)       = (0.5, 0.5, 0.5, 1)
+        _BackgroundColor ("Background Color", Color)       = (1, 1, 1, 1)
+        _LineColor       ("Line Color",       Color)       = (0, 0, 0, 1)
     }
 
     SubShader
