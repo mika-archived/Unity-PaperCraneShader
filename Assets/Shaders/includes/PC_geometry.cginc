@@ -82,8 +82,8 @@ void doStep2(const d2g i, const float lengthOfEdge, inout g2f o[6], inout uint c
         float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f + lengthOfEdge, 0.0f, 0.0f),
         float3(0.0f, 0.0f, 0.0f),
-        float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
         float3(0.0f, 0.0f - lengthOfEdge, 0.0f),
+        float3(0.0f + lengthOfEdge, 0.0f - lengthOfEdge, 0.0f),
     };
 
     // WORKAROUND: In HLSL, `round(x)` (where x is 0.5f) is specifed to return 0.
