@@ -22,23 +22,6 @@ float4 idToColor(const uint id)
 
     return float4(r / 0xFF, g / 0xFF, b / 0xFF, 1.0f);
 }
-
-#if defined(PC_PASS_CUBE_SHADOWCASTER)
-
-float4 fs(const g2f data) : SV_TARGET
-{
-    return 0; // TO-DO
-}
-
-#elif defined(PC_PASS_SHADOWCASTER)
-
-float4 fs(const g2f data) : SV_TARGET
-{
-    return 0;
-}
-
-#else
-
 float4 fs(const g2f data) : SV_TARGET
 {
     float alpha = UCLAGL_GetWireframeAlpha(data.distance, 1, 1, 1);
@@ -54,5 +37,3 @@ float4 fs(const g2f data) : SV_TARGET
 
     return color;
 }
-
-#endif
